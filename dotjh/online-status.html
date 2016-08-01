@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <meta charset="UTF-8">
+    <title>online status</title>
+  </head>
+  <body>
+    <h1>Hello</h1>
+    <script>
+      console.log("online status listener starting...");
+      const ipcRenderer = require('electron').ipcRenderer;
+      var updateOnlineStatus = function() {
+        console.log("收到通知 %s",navigator.onLine);
+        ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
+      };
+
+      window.addEventListener('online',  updateOnlineStatus);
+      window.addEventListener('offline',  updateOnlineStatus);
+
+      updateOnlineStatus();
+    </script>
+  </body>
+</html>
