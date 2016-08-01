@@ -1,28 +1,20 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "graph-dot-editor",
+  "version": "0.1.0",
+  "description": "Dot.File editor",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ electron-packager ./ keepchinanet --overwrite --app-version=1.0.0 --platform=win32 --arch=all --out=../keepchinanet --icon=./img/chicken.png"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/electron/electron-quick-start.git"
-  },
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial"
-  ],
-  "author": "GitHub",
+  "author": "mooglics",
   "license": "CC0-1.0",
-  "bugs": {
-    "url": "https://github.com/electron/electron-quick-start/issues"
+  "dependencies" : {
+    "electron-reload": "^1.0.1"
   },
-  "homepage": "https://github.com/electron/electron-quick-start#readme",
   "devDependencies": {
-    "electron-prebuilt": "^1.2.0"
+    "electron-packager": "^7.3.0",
+    "electron-prebuilt": "^1.3.1",
+    "electron-reload": "^1.0.1"
   }
 }

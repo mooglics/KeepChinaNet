@@ -24,10 +24,6 @@ if (global.APP_CONFIG.isDevelopment) {
 }
 
 
-
-
-
-
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600, resizable : false})
