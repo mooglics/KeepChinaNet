@@ -22,8 +22,19 @@ ipcRenderer.on('online-status-changed', function(event, status) {
 
 
 $("#gen_btn").bind("click",function() {
- var buffer =  fs.readFileSync("img/chicken.png");
- console.log(buffer.toString("base64"));
+    var sc_content = $("#dot_script").val();
+    console.log("脚本内容为："+sc_content);
+    fs.writeFile('/tmp/dotgraph.dot', sc_content);
+    var exec = require('child_process').exec;
+    var cmdStr = "dot -Tpng /tmp/dotgraph.dot -o /tmp/dotgraph.png";
+    exec(cmdStr, function(err,stdout,stderr){
+        if(err) {
+            console.log('dot 命令执行失败:'+stderr);
+        } else {
+            console.log(stdout);
+        }
+    });
+ var buffer =  fs.readFileSync("/tmp/dotgraph.png");
  var content = buffer.toString("base64");
  $("#dot_view_panel").html("<img src='data:image/png;base64,"+content+"' alt=''>");
 });
