@@ -23,20 +23,49 @@ ipcRenderer.on('online-status-changed', function(event, status) {
 
 $("#gen_btn").bind("click",function() {
     var sc_content = $("#dot_script").val();
-    console.log("脚本内容为："+sc_content);
-    fs.writeFile('/tmp/dotgraph.dot', sc_content);
+    fs.existsSync('/tmp/dotgraph.png', (exists) => {
+      if (exists) {
+        console.log('删除png临时文件');
+        fs.unlinkSync('/tmp/dotgraph.png');
+      }
+    });
+    fs.writeFileSync('/tmp/dotgraph.dot', sc_content, 'utf-8','','w+');
     var exec = require('child_process').exec;
     var cmdStr = "dot -Tpng /tmp/dotgraph.dot -o /tmp/dotgraph.png";
     exec(cmdStr, function(err,stdout,stderr){
         if(err) {
             console.log('dot 命令执行失败:'+stderr);
         } else {
-            console.log(stdout);
+            console.log('正常生成');
         }
     });
  var buffer =  fs.readFileSync("/tmp/dotgraph.png");
  var content = buffer.toString("base64");
+ $("#dot_view_panel").html("loading...");
  $("#dot_view_panel").html("<img src='data:image/png;base64,"+content+"' alt=''>");
 });
 
+//防止界面拖拽时产生弹出文件选择框事件
+$(document).on({
+        dragleave:function(e){    //拖离
+            e.preventDefault();
+        },
+        drop:function(e){  //拖后放
+            e.preventDefault();
+        },
+        dragenter:function(e){    //拖进
+            e.preventDefault();
+        },
+        dragover:function(e){    //拖来拖去
+            e.preventDefault();
+        }
+});
+
+$("#dot_script").bind("drop",function(event) {
+  var fileList = event.originalEvent.dataTransfer;
+  var filecontent = fs.readFileSync(fileList.files[0].path);
+  //console.log(filecontent);
+  $("#dot_script").val(filecontent);
+
+});
 
