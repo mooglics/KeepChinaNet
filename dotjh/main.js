@@ -18,9 +18,9 @@ global.APP_CONFIG = {
 };
 
 if (global.APP_CONFIG.isDevelopment) {
-    require('electron-reload')(__dirname, {
-        ignored: /node_modules|[\/\\]\./
-    });
+  require('electron-reload')(__dirname, {
+    ignored: /node_modules|[\/\\]\./
+  });
 }
 
 
@@ -33,7 +33,7 @@ function createWindow () {
 
   // Open the DevTools.
   if (APP_CONFIG.isDevelopment) {
-  mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
   }
 
   // Emitted when the window is closed.
