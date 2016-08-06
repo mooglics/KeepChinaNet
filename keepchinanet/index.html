@@ -1,47 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>Keep Online</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body>
-   <div class="container">
+</head>
 
-      <form class="form-signin">
-        <h2 class="form-signin-heading"><span id="online_span" class="label label-default">&nbsp;&nbsp;</span>    Keep ChinaNet Online</h2>
-        <p>
-        确保无线网络已经链接上ChinaNet。
-        </p>
+<body>
+    <div class="container">
+        <form class="form-signin">
+            <h2 class="form-signin-heading"><span id="online_span" class="label label-default">&nbsp;&nbsp;</span>    Keep ChinaNet Online</h2>
+            <p>
+                确保无线网络已经链接上ChinaNet。
+            </p>
+            <button class="btn btn-default btn-block" type="button">开始</button>
+            <label for="inputEmail" class="sr-only">Wifi User</label>
+            <input type="email" id="chinanet-id" class="form-control" placeholder="wifi account" required autofocus>
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="chinanet-pwd" class="form-control" placeholder="Password" required>
+            <button id="saveBtn" class="btn btn-primary " type="button">保存账号</button>
+            <button class="btn btn-danger" type="button">删除账号</button>
+            <div class="well">
+                <p class="text-muted">
+                    注：ChinaNet登陆后4个小时后会自动将用户下线
+                </p>
+            </div>
+        </form>
+    </div>
+    <!-- /container -->
+</body>
+<script>
+var jQuery = require('jquery');
+require('bootstrap');
+// You can also require other files to run in this process
+require('./renderer.js');
+</script>
 
-        <label for="inputEmail" class="sr-only">Wifi User</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="wifi account" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> 记住我的账号
-          </label>
-        </div>
-        <button class="btn btn-primary " type="button">Keep Online</button>
-        <button class="btn btn-danger" type="button">Offline</button>
-        <button class="btn btn-danger" type="button">Exit</button>
-        <div class="well">
-        <p class="text-muted">
-        注：ChinaNet登陆后4个小时后会自动将用户下线
-        </p>
-        </div>
-      </form>
-
-    </div> <!-- /container -->
-
-
-  </body>
-
-  <script>
-    var jQuery = require('jquery');
-    require('bootstrap');
-    // You can also require other files to run in this process
-    require('./renderer.js');
-  </script>
 </html>

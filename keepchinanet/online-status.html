@@ -1,45 +1,51 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>online status</title>
+    <meta charset="UTF-8">
+    <title>online status</title>
 </head>
+
 <body>
-  <h1>Hello</h1>
-  <script>
+    <h1>Hello</h1>
+    <script>
     console.log("online status listener starting...");
     const ipcRenderer = require('electron').ipcRenderer;
     var updateOnlineStatus = function() {
-      console.log("收到通知 %s",navigator.onLine);
-      ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
+        console.log("收到通知 %s", navigator.onLine);
+        ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline');
     };
 
-    window.addEventListener('online',  updateOnlineStatus);
-    window.addEventListener('offline',  updateOnlineStatus);
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
 
     updateOnlineStatus();
 
     var CronJob = require('cron').CronJob;
-    new CronJob("*/10 * * * * *",function() {main();}).start();
+    new CronJob("*/10 * * * * *", function() {
+        main();
+    }).start();
 
-      //引入request并启用Cookie
-      var request = require('request').defaults({
+    //引入request并启用Cookie
+    var request = require('request').defaults({
         jar: true
-      });
-//定义全局常量
-var WAP_163 = 'http://wap.163.com/index.jsp?r=' + Math.random();
+    });
+    //定义全局常量
+    var WAP_163 = 'http://wap.163.com/index.jsp?r=' + Math.random();
 
-function main() {
-  request(WAP_163, function(error, res, body) {
-    if (body && res.statusCode == 200 && body.indexOf("网易报时") != -1) {
-      console.log('网络正常');
-      ipcRenderer.send('wwwnet-status-changed','OK');
-    } else {
-            ipcRenderer.send('wwwnet-status-changed','BAD');
+    function main() {
+        var pwd = window.localStorage.getItem("chinanet-pwd");
+        var id = window.localStorage.getItem("chinanet-id");
+        console.log("本地保存账号为：{},{}",id,pwd);
+        request(WAP_163, function(error, res, body) {
+            if (body && res.statusCode == 200 && body.indexOf("网易报时") != -1) {
+                ipcRenderer.send('wwwnet-status-changed', 'OK');
+            } else {
+                ipcRenderer.send('wwwnet-status-changed', 'BAD');
+            }
+        });
     }
-  });
-}
-
-</script>
+    </script>
 </body>
+
 </html>
