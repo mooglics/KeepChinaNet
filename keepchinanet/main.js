@@ -55,7 +55,7 @@ let onlineStatusWindow;
 app.on('ready', function() {
   console.log("app starting...");
   createWindow();
-  onlineStatusWindow = new BrowserWindow({ width: 400, height: 300, show: false , frame : false, resizable : false});
+  onlineStatusWindow = new BrowserWindow({ width: 400, height: 300, show: true , frame : false, resizable : false});
   if (global.APP_CONFIG.isDevelopment) {
     onlineStatusWindow.webContents.openDevTools()
   }
@@ -87,6 +87,10 @@ app.on('activate', function () {
 ipcMain.on('online-status-changed', function(event, status) {
   console.log("收到在线/离线状态的变化通知 %s",status);
   mainWindow.webContents.send('online-status-changed',status)
+});
+
+ipcMain.on('wwwnet-status-changed', function(event, status) {
+  console.log("收到WWW NET 状态的变化通知 %s",status);
 });
 
 
