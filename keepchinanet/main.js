@@ -13,7 +13,7 @@ const ipcMain = electron.ipcMain;
 let mainWindow
 
 global.APP_CONFIG = {
-    isDevelopment: true,
+    isDevelopment: false,
     version: '1.0.0'
 };
 
@@ -26,7 +26,7 @@ if (global.APP_CONFIG.isDevelopment) {
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 600, resizable: false })
+    mainWindow = new BrowserWindow({ width: 400, height: 320, resizable: false })
 
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/index.html`)
@@ -55,7 +55,7 @@ let onlineStatusWindow;
 app.on('ready', function() {
     console.log("app starting...");
     createWindow();
-    onlineStatusWindow = new BrowserWindow({ width: 400, height: 300, show: false, frame: false, resizable: false });
+    onlineStatusWindow = new BrowserWindow({ width: 400, height: 450, show: false, frame: false, resizable: false });
     if (global.APP_CONFIG.isDevelopment) {
         onlineStatusWindow.webContents.openDevTools()
     }
