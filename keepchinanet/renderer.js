@@ -26,14 +26,50 @@ $("#saveBtn").on("click", function() {
     window.localStorage.setItem("chinanet-pwd", $("#chinanet-pwd").val());
 })
 
-$("#actionBtn").on("click", function() {
-    main();
-})
+
+function markOffline() {
+    $("#actionBtn").unbind("click");
+    $("#actionBtn").text("连接")
+    $("#actionBtn").removeClass("btn-success");
+    $("#actionBtn").addClass("btn-primary");
+    $("#actionBtn").bind("click", function() {
+        $("#actionBtn").unbind("click");
+        keepJob.start();
+    });
+}
+
+function markOnline() {
+    //在线后讲界面展示为在线状态
+    $("#actionBtn").text("断开")
+    $("#actionBtn").removeClass("btn-primary");
+    $("#actionBtn").addClass("btn-success");
+    $("#actionBtn").unbind("click");
+    $("#actionBtn").bind("click", function() {
+        request(LOGOUT_OPT, function(error, res, body) {
+            console.log("准备断开,%s",error);
+            keepJob.stop();
+            if (body && res.statusCode == 200) {
+                //断网成功；
+                markOffline();
+            }
+        });
+    });
+}
 
 
 $(document).ready(function() {
+    //从本地缓存中加载存储的账号密码
     $("#chinanet-id").val(window.localStorage.getItem("chinanet-id"))
     $("#chinanet-pwd").val(window.localStorage.getItem("chinanet-pwd"))
+        //判断当前网络状态，如果可以上网则需要将界面设置为，已经联网，提供一个断网按钮，并开启轮询任务。
+        // 不能上网则显示 开始按钮
+    request(WAP_163, function(error, res, body) {
+        if (body && res.statusCode == 200 && body.indexOf("网易报时") != -1) {
+            markOnline();
+        } else {
+            markOffline();
+        }
+    });
 });
 
 
@@ -83,6 +119,7 @@ var DWR_OPT = {
 };
 var LOGOUT_OPT = {
     method: 'POST',
+    rejectUnauthorized: false,
     uri: 'https://wlan.ct10000.com/portal/Logout.do?NasType=Huawei&NasName=BJ-DS-SR-1.M.ME60'
 }
 var LOGIN_STR = 'username=!1!&password=!2!&validateCode=&postfix=%40wlan.bj.chntel.com&address=bj&loginvalue=1&basePath=https%3A%2F%2Fwlan.ct10000.com%3A443%2Fportal%2F&language=CN_SC&longNameLength=32&NasType=Huawei&NasName=BJ-DS-SR-1.M.ME60&OrgURL=null&isMobileRand=false&isNeedValidateCode=false&phone=&pwd_phone=!2!&validateCode_phone=&otherUser=!1!&address1=bj&otherUserPwd=!2!&validateCode_otherUser=&select2=-Select+Service+Provider-';
@@ -93,6 +130,7 @@ var LOGIN_OPT = {
 };
 
 function main() {
+    console.log("执行main函数");
     LOGIN_STR = LOGIN_STR.replace(/!1!/g, $("#chinanet-id").val());
     LOGIN_STR = LOGIN_STR.replace(/!2!/g, $("#chinanet-pwd").val());
     LOGIN_OPT.body = LOGIN_STR;
@@ -127,7 +165,6 @@ function step2(result, cb) {
             if (res.statusCode == 200) {
                 //准备获取DWRSESSIONID;
                 request(DWR_OPT, function(error, res, body) {
-                    console.log(error);
                     var dwrsid = body.match(/,"(.{27})\"/)[1];
                     console.log("获取sessionid,%s", dwrsid);
                     var domain = "https://wlan.ct10000.com";
@@ -137,6 +174,7 @@ function step2(result, cb) {
                         request(WAP_163, function(error, res, body) {
                             if (body && res.statusCode == 200 && body.indexOf("网易报时") != -1) {
                                 cb('登录成功，可以使用网络了');
+                                markOnline();
                             } else {
                                 cb('网络仍然不正常');
                             }
