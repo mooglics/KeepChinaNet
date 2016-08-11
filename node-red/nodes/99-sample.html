@@ -1,0 +1,252 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- Sample html file that corresponds to the 99-sample.js file              -->
+<!-- This creates and configures the onscreen elements of the node           -->
+<!-- If you use this as a template, update the copyright with your own name. -->
+<!-- First, the content of the edit dialog is defined.                       -->
+<script type="text/x-red" data-template-name="XML_ExpressReturnBoolValue">
+    <!-- data-template-name identifies the node type this is for              -->
+    <!-- Each of the following divs creates a field in the edit dialog.       -->
+    <!-- Generally, there should be an input for each property of the node.   -->
+    <!-- The for and id attributes identify the corresponding property        -->
+    <!-- (with the 'node-input-' prefix).                                     -->
+    <!-- The available icon classes are defined Font Awesome Icons (FA Icons) -->
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <!-- By convention, most nodes have a 'name' property. The following div -->
+    <!-- provides the necessary field. Should always be the last option      -->
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> 异常处理机制</label>
+        <select id="node-input-attr1">
+            <option value="1">需要异常</option>
+            <option value="2">xxxx</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> 是否冲正</label>
+        <select id="node-input-attr2">
+            <option value="1">需要异常</option>
+            <option value="2">xxxx</option>
+        </select>
+    </div>
+    <div class="form-row" style="margin-bottom: 0px;">
+        <label for="node-input-info" style="width: 100% !important;"><i class="fa fa-comments"></i> 输入参数</label>
+    </div>
+    <div class="form-row node-input-rule-container-row">
+        <ol id="node-input-rule-container"></ol>
+    </div>
+    <div class="form-row" style="margin-bottom: 0px;">
+        <label for="node-input-info" style="width: 100% !important;"><i class="fa fa-comments"></i> 备注</label>
+        <input type="hidden" id="node-input-info" autofocus="autofocus">
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-info-editor"></div>
+    </div>
+    <div class="form-tips">Tip: 备注支持markdown语法，保存后显示在右侧info面板</div>
+</script>
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="XML_ExpressReturnBoolValue">
+    <h3>组件使用帮助</h3>
+    <p>用于判断表达式是否为真的条件。</p>
+    <pre>注意参数</pre>
+    <ul>
+        <li>参数1：<code>node.log("Log")</code></li>
+        <li>参数2：<code>node.warn("Warning")</code></li>
+        <li>参数3：<code>node.error("Error")</code></li>
+    </ul>
+    <hr/>
+</script>
+<!-- Finally, the node type is registered along with all of its properties   -->
+<!-- The example below shows a small subset of the properties that can be set-->
+<script type="text/javascript">
+RED.nodes.registerType('XML_ExpressReturnBoolValue', {
+    color: "#87A980",
+    category: 'Cathay', // the palette category
+    defaults: { // defines the editable properties of the node
+        name: {
+            value: ""
+        }, //  along with default values.
+        topic: {
+            value: "",
+            required: false
+        },
+        attr1: {
+            value: ''
+        }, //异常处理机制
+        attr2: {
+            value: ''
+        }, //是否重整
+        info: {
+            value: ''
+        }, //说明
+        attr4: {
+            value: ''
+        }, // 输入参数
+        attr5: {
+            value: ''
+        }, // 执行结果
+        rules: {
+            value: [{
+                paramtype: "1",
+                paramvalue: "aaaa"
+            }]
+        },
+    },
+    inputs: 1, // set the number of inputs - only 0 or 1
+    outputs: 1, // set the number of outputs - 0 to n
+    // set the icon (held in icons dir below where you save the node)
+    icon: "function.png", // saved in  icons/myicon.png
+    label: function() { // sets the default label contents
+        return this.name || this.topic || "XML_ExpressReturnBoolValue";
+    },
+    labelStyle: function() { // sets the class to apply to the label
+        return this.name ? "node_label_italic" : "";
+    },
+    info: function() {
+        return (this.name ? "# " + this.name + "\n" : "") + (this.info || "");
+    },
+    oneditprepare: function() {
+        var node = this;
+        this.editor = RED.editor.createEditor({
+            id: 'node-input-info-editor',
+            mode: 'ace/mode/markdown',
+            value: $("#node-input-info").val()
+        });
+        this.editor.focus();
+
+        var operators = [{
+            t: "定值",
+            v: "0"
+        }, {
+            t: "XML标签",
+            v: "1"
+        }, {
+            t: "表达式",
+            v: "2"
+        }];
+
+        function resizeRule(rule) {
+            var newWidth = rule.width();
+            var selectField = rule.find("select");
+            var type = selectField.val() || "";
+            var valueField = rule.find(".node-input-rule-value");
+            var selectWidth;
+            //selectField.width(selectWidth);
+            selectWidth = selectField.width();
+            valueField.width(newWidth - selectWidth - 80);
+            // valueField.typedInput("width", (newWidth - selectWidth - 70));
+
+        }
+
+        $("#node-input-rule-container").css('min-height', '250px').css('min-width', '450px').editableList({
+            addItem: function(container, i, opt) {
+                var rule = opt;
+                if (!rule.hasOwnProperty('paramtype')) {
+                    rule.paramtype = '1';
+                }
+                var row = $('<div/>').appendTo(container);
+                var selectField = $('<select/>', {
+                    style: "width:100px; margin-left: 5px; text-align: center;"
+                }).appendTo(row);
+                for (var d in operators) {
+                    selectField.append($("<option></option>").val(operators[d].v).text(operators[d].t));
+                }
+                var valueField = $('<input/>', {
+                    class: "node-input-rule-value",
+                    type: "text",
+                    placeholder: "请输入参数内容",
+                    style: "margin-left: 5px;"
+                }).appendTo(row);
+                var finalspan = $('<span/>', {
+                    style: "float: left;margin-top: 6px;"
+                }).appendTo(row);
+                finalspan.append('<span class="node-input-rule-index">' + (i + 1) + ' </span> &#8594; ');
+
+                selectField.val(rule.paramtype);
+                valueField.val(rule.paramvalue);
+                resizeRule(row);
+            },
+            removeItem: function(opt) {
+                var rules = $("#node-input-rule-container").editableList('items');
+                rules.each(function(i) {
+                    $(this).find(".node-input-rule-index").html(i + 1);
+                });
+            },
+            resizeItem: resizeRule,
+            sortItems: function(rules) {
+                var rules = $("#node-input-rule-container").editableList('items');
+                rules.each(function(i) {
+                    $(this).find(".node-input-rule-index").html(i + 1);
+                });
+            },
+            sortable: false,
+            removable: true
+        });
+
+        for (var i = 0; i < this.rules.length; i++) {
+            var rule = this.rules[i];
+            $("#node-input-rule-container").editableList('addItem', rule);
+        }
+    },
+    oneditsave: function() {
+        $("#node-input-info").val(this.editor.getValue());
+        delete this.editor;
+
+        var rules = $("#node-input-rule-container").editableList('items');
+        var ruleset;
+        var node = this;
+        node.rules = [];
+        rules.each(function(i) {
+            var rule = $(this);
+            var type = rule.find("select").val();
+            var r = {
+                paramtype: type
+            };
+            r.paramvalue = rule.find(".node-input-rule-value").val();
+
+            node.rules.push(r);
+        });
+        this.outputs = node.rules.length;
+    },
+    oneditresize: function(size) {
+        var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+        var height = $("#dialog-form").height();
+        for (var i = 0; i < rows.size(); i++) {
+            height -= $(rows[i]).outerHeight(true);
+        }
+        var editorRow = $("#dialog-form>div.node-text-editor-row");
+        height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+        $(".node-text-editor").css("height", height + "px");
+        this.editor.resize();
+
+
+        var rows = $("#dialog-form>div:not(.node-input-rule-container-row)");
+        var height = size.height;
+        for (var i = 0; i < rows.size(); i++) {
+            height -= $(rows[i]).outerHeight(true);
+        }
+        var editorRow = $("#dialog-form>div.node-input-rule-container-row");
+        height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+        $("#node-input-rule-container").editableList('height', height);
+    }
+});
+</script>

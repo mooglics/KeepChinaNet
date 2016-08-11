@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('XML_ExpressReturnBoolValue',{
+        // node definition
+        color: "#E2D96E",
+        category: 'Cathay',
+        defaults: {
+            name: {value:""},
+            property: {value:"payload", required:true},
+            propertyType: { value:"msg" },
+            rules: {value:[{t:"eq", v:""}]},
+            checkall: {value:"true", required:true},
+            outputs: {value:1}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "switch.png",
+        label: function() {
+            return this.name||"switch";
+        }
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="node-type">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="node-type">
+   <p>Some useful help text about the node.</p>
+   <p>Outputs an object called <b>msg</b> containing <b>msg.topic</b> and
+   <b>msg.payload</b>. msg.payload is a String.</p>
+</script>
