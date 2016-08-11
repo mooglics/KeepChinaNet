@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package": "ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ electron-packager ./ keepchinanet --overwrite --app-version=1.0.0 --platform=win32 --arch=all --out=../keepchinanet --icon=./img/chicken.png"
+    "package": "ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/ electron-packager ./ keepchinanet --overwrite --version=1.3.1 --app-version=1.0.0 --platform=win32 --arch=all --out=../keepchinanet --icon=./img/chicken.png"
   },
   "author": "mooglics",
   "license": "CC0-1.0",

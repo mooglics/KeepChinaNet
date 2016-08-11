@@ -27,6 +27,7 @@ if (global.APP_CONFIG.isDevelopment) {
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({ width: 800, height: 640, resizable: false })
+    //mainWindow.loadURL(``)
 
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/index.html`)
