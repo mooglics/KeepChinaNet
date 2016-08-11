@@ -1,5 +1,12 @@
 # electron-node-red
 
+## 问题和扩展
+
+- 如何扩展Flow自身的配置属性
+- 划线最好有箭头显示
+
+目前只有Name一个属性，需要扩展流程ID,备注，创建者等等；
+
 ## 加载自己的node
 
 修改文件`.node-red/setting.json`
@@ -29,7 +36,7 @@ Line `5296` 开始
 ```javascript 
 node.each(function(d,i) {
 
-output_group.append("rect").attr("class","port").attr("rx",3).attr("ry",3).attr("width",20).attr("height",10)
+output_group.append("rect").attr("class","port").attr("rx",3).attr("ry",3).attr("width",10).attr("height",10)
 ```
 
 Line 5363 增加

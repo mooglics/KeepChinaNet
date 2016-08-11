@@ -17,19 +17,15 @@
 <!-- This creates and configures the onscreen elements of the node           -->
 <!-- If you use this as a template, update the copyright with your own name. -->
 <!-- First, the content of the edit dialog is defined.                       -->
+
+<style>
+    .xxxoutput_size111 {
+        font-color : #87A980;
+    }
+</style>
+
 <script type="text/x-red" data-template-name="XML_ExpressReturnBoolValue">
-    <!-- data-template-name identifies the node type this is for              -->
-    <!-- Each of the following divs creates a field in the edit dialog.       -->
-    <!-- Generally, there should be an input for each property of the node.   -->
-    <!-- The for and id attributes identify the corresponding property        -->
-    <!-- (with the 'node-input-' prefix).                                     -->
-    <!-- The available icon classes are defined Font Awesome Icons (FA Icons) -->
-    <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" placeholder="Topic">
-    </div>
-    <!-- By convention, most nodes have a 'name' property. The following div -->
-    <!-- provides the necessary field. Should always be the last option      -->
+
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -48,20 +44,36 @@
             <option value="2">xxxx</option>
         </select>
     </div>
-    <div class="form-row" style="margin-bottom: 0px;">
-        <label for="node-input-info" style="width: 100% !important;"><i class="fa fa-comments"></i> 输入参数</label>
+    <div class="form-row">
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-config-tabs"></ul>
     </div>
-    <div class="form-row node-input-rule-container-row">
-        <ol id="node-input-rule-container"></ol>
+    <div id="node-config-tabs-content" style="min-height: 170px;">
+        <div id="config-tab-param" style="display:none">
+            <div class="form-tips">Tip: 下表中下拉选择是取值方式以及配置值
+                <ul>
+                    <li><code>定值</code> - 以配置值作为参数</li>
+                    <li><code>XML标签</code> - 从总线中自动获取对应标签的值作为参数</li>
+                    <li><code>表达式</code> - 将配置值作为表达式进行计算的结果作为参数</li>
+                </ul>
+            </div>
+            <div class="form-row node-input-rule-container-row">
+                <ol id="node-input-rule-container"></ol>
+            </div>
+        </div>
+        <div id="config-tab-pathcode" style="display:none">
+        </div>
+        <div id="config-tab-memo" style="display:none">
+            <div class="form-tips">Tip: 备注支持markdown语法，保存后显示在右侧info面板</div>
+            <div class="form-row" style="margin-bottom: 0px;">
+                <input type="hidden" id="node-input-info" autofocus="autofocus">
+            </div>
+            <div class="form-row node-text-editor-row">
+                <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-info-editor"></div>
+            </div>
+        </div>
+        <div id="config-tab-other" style="display:none">
+        </div>
     </div>
-    <div class="form-row" style="margin-bottom: 0px;">
-        <label for="node-input-info" style="width: 100% !important;"><i class="fa fa-comments"></i> 备注</label>
-        <input type="hidden" id="node-input-info" autofocus="autofocus">
-    </div>
-    <div class="form-row node-text-editor-row">
-        <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-info-editor"></div>
-    </div>
-    <div class="form-tips">Tip: 备注支持markdown语法，保存后显示在右侧info面板</div>
 </script>
 <!-- Next, some simple help text is provided for the node.                   -->
 <script type="text/x-red" data-help-name="XML_ExpressReturnBoolValue">
@@ -82,6 +94,9 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
     color: "#87A980",
     category: 'Cathay', // the palette category
     defaults: { // defines the editable properties of the node
+        outputs: {
+            value: 1
+        },
         name: {
             value: ""
         }, //  along with default values.
@@ -125,6 +140,33 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
         return (this.name ? "# " + this.name + "\n" : "") + (this.info || "");
     },
     oneditprepare: function() {
+        var tabs = RED.tabs.create({
+            id: "node-config-tabs",
+            onchange: function(tab) {
+                $("#node-config-tabs-content").children().hide();
+                $("#" + tab.id).show();
+            }
+        });
+        tabs.addTab({
+            id: "config-tab-param",
+            label: "组件参数"
+        });
+        tabs.addTab({
+            id: "config-tab-pathcode",
+            label: "组件结果"
+        });
+        tabs.addTab({
+            id: "config-tab-memo",
+            label: "组件备注"
+        });
+        tabs.addTab({
+            id: "config-tab-other",
+            label: "其他配置"
+        });
+        setTimeout(function() {
+            tabs.resize()
+        }, 0);
+
         var node = this;
         this.editor = RED.editor.createEditor({
             id: 'node-input-info-editor',
