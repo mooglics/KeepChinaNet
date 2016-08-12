@@ -3,11 +3,17 @@
 ## 问题
 
 - [ ] 不支持节点首尾相连
-- [ ] 多个output出口在界面上无法标示进行区分，tulip中是**-1,0,1,100**等
-- [ ] 连接线不支持标注，也不能手工调整连接线位置
-- [ ] 连接线最好有箭头显示
+- [x] 多个output出口在界面上无法标示进行区分，tulip中是**-1,0,1,100**等
+- [x] 连接线最好有箭头显示
 - [ ] 节点入口和出口最好改为上下，而不是左右。
 - [ ] 如何扩展Flow自身的配置属性,目前只有Name一个属性，需要扩展流程ID,备注，创建者等等；
+> `showRenameWorkspaceDialog` 方法就是双击flow页签的整个处理过程，但是只有name属性
+- [ ] aaa
+
+### 非重要问题
+- [ ] 连接线不支持标注
+- [ ] 连接线不能手工调整连接线位置
+
 
 ## TaiHang节点实现
 
@@ -50,6 +56,8 @@ output_group.append("rect").attr("class","port").attr("rx",3).attr("ry",3).attr(
 ```javascript
 output_group.append("text").attr("class","output_size").attr("x",15).attr("y",10).text(function(d) { return d;});
 ```
+
+
 
 
 
