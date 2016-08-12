@@ -17,15 +17,12 @@
 <!-- This creates and configures the onscreen elements of the node           -->
 <!-- If you use this as a template, update the copyright with your own name. -->
 <!-- First, the content of the edit dialog is defined.                       -->
-
 <style>
-    .xxxoutput_size111 {
-        font-color : #87A980;
-    }
+.xxxoutput_size111 {
+    font-color: #87A980;
+}
 </style>
-
 <script type="text/x-red" data-template-name="XML_ExpressReturnBoolValue">
-
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -61,6 +58,11 @@
             </div>
         </div>
         <div id="config-tab-pathcode" style="display:none">
+            <div class="form-tips">Tip: 下表中配置节点流程走向和走向说明文字
+            </div>
+            <div class="form-row node-input-pathCode-container-row">
+                <ol id="node-input-pathCode-container"></ol>
+            </div>
         </div>
         <div id="config-tab-memo" style="display:none">
             <div class="form-tips">Tip: 备注支持markdown语法，保存后显示在右侧info面板</div>
@@ -125,6 +127,15 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
                 paramvalue: "aaaa"
             }]
         },
+        pathCode: {
+            value: [{
+                code: '-1',
+                memo: '失败后的出口'
+            }, {
+                code: '0',
+                memo: '组件成功结果'
+            }]
+        }
     },
     inputs: 1, // set the number of inputs - only 0 or 1
     outputs: 1, // set the number of outputs - 0 to n
@@ -186,6 +197,7 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
             v: "2"
         }];
 
+        //BEGIN 参数配置 ========================================================================
         function resizeRule(rule) {
             var newWidth = rule.width();
             var selectField = rule.find("select");
@@ -195,11 +207,11 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
             //selectField.width(selectWidth);
             selectWidth = selectField.width();
             valueField.width(newWidth - selectWidth - 80);
+            //console.log("长度为 %s,%s,%s", newWidth, selectWidth);
             // valueField.typedInput("width", (newWidth - selectWidth - 70));
-
         }
 
-        $("#node-input-rule-container").css('height','350px').css('min-height', '250px').css('min-width', '450px').editableList({
+        $("#node-input-rule-container").css('height', '350px').css('min-height', '250px').css('min-width', '450px').editableList({
             addItem: function(container, i, opt) {
                 var rule = opt;
                 if (!rule.hasOwnProperty('paramtype')) {
@@ -248,13 +260,75 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
             var rule = this.rules[i];
             $("#node-input-rule-container").editableList('addItem', rule);
         }
+        //END 参数配置 ========================================================================
+
+
+        //BEGIN 增加组件结果配置 ========================================================================
+        function resizePathCode(rule) {
+            var newWidth = rule.width();
+            var selectField = rule.find(".node-input-pathCodeCode-value");
+            var valueField = rule.find(".node-input-pathCodeMemo-value");
+            var selectWidth = selectField.width();
+            //console.log("pathCode长度为 %s,%s,%s", newWidth, selectWidth);
+
+            //valueField.width(newWidth - selectWidth - 80);
+            // valueField.typedInput("width", (newWidth - selectWidth - 70));
+        }
+
+        $("#node-input-pathCode-container").css('height', '350px').css('min-height', '250px').css('min-width', '450px').editableList({
+            addItem: function(container, i, opt) {
+                var rule = opt;
+                var row = $('<div/>').appendTo(container);
+                var valueField1 = $('<input/>', {
+                    class: "node-input-pathCodeCode-value",
+                    type: "text",
+                    placeholder: "请输入pathCode",
+                    style: "width : 100px;margin-left: 5px;"
+                }).appendTo(row);
+                var valueField2 = $('<input/>', {
+                    class: "node-input-pathCodeMemo-value",
+                    type: "text",
+                    placeholder: "请输入备注内容",
+                    style: "margin-left: 5px;"
+                }).appendTo(row);
+                var finalspan = $('<span/>', {
+                    style: "float: left;margin-top: 6px;"
+                }).appendTo(row);
+                finalspan.append('<span class="node-input-pathCode-index">' + (i + 1) + ' </span> &#8594; ');
+
+                valueField1.val(rule.code);
+                valueField2.val(rule.memo);
+                resizePathCode(row);
+            },
+            removeItem: function(opt) {
+                var rules = $("#node-input-pathCode-container").editableList('items');
+                rules.each(function(i) {
+                    $(this).find(".node-input-pathCode-index").html(i + 1);
+                });
+            },
+            resizeItem: resizePathCode,
+            sortItems: function(rules) {
+                var rules = $("#node-input-pathCode-container").editableList('items');
+                rules.each(function(i) {
+                    $(this).find(".node-input-pathCode-index").html(i + 1);
+                });
+            },
+            sortable: false,
+            removable: true
+        });
+
+        for (var i = 0; i < this.pathCode.length; i++) {
+            var rule = this.pathCode[i];
+            $("#node-input-pathCode-container").editableList('addItem', rule);
+        }
+        //END 增加组件结果配置 ========================================================================
     },
     oneditsave: function() {
         $("#node-input-info").val(this.editor.getValue());
         delete this.editor;
 
+        //BEGIN 请求参数部分的配置 ========================================================================
         var rules = $("#node-input-rule-container").editableList('items');
-        var ruleset;
         var node = this;
         node.rules = [];
         rules.each(function(i) {
@@ -267,7 +341,26 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
 
             node.rules.push(r);
         });
-        this.outputs = node.rules.length;
+        //END 请求参数部分的配置 ========================================================================
+
+        //BEGIN 组件结果部分的配置 ========================================================================
+
+        var codes = $("#node-input-pathCode-container").editableList('items');
+        //var ruleset;
+        node.pathCode = [];
+        codes.each(function(i) {
+            var rule = $(this);
+            var code = rule.find(".node-input-pathCodeCode-value").val();
+            var memo = rule.find(".node-input-pathCodeMemo-value").val();
+            node.pathCode.push({
+                'code': code,
+                'memo': memo
+            });
+            //TODO 需要判断所有的code唯一
+        });
+        this.outputs = node.pathCode.length;
+        //END 组件结果部分的配置 ========================================================================
+
     },
     oneditresize: function(size) {
         var rows = $("#dialog-form>div:not(.node-text-editor-row)");
@@ -289,6 +382,7 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
         var editorRow = $("#dialog-form>div.node-input-rule-container-row");
         height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
         $("#node-input-rule-container").editableList('height', height);
+
     }
 });
 </script>
