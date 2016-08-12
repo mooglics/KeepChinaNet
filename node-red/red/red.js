@@ -4795,7 +4795,9 @@ RED.view = (function() {
                 }
             }
             for (i=0;i<drag_lines.length;i++) {
-                if (portType != drag_lines[i].portType && mouseup_node !== drag_lines[i].node) {
+                // 连接线默认不允许同节点首尾相连，在这里屏蔽掉了
+                if (portType != drag_lines[i].portType) {
+                //if (portType != drag_lines[i].portType && mouseup_node !== drag_lines[i].node) {
                     var drag_line = drag_lines[i];
                     var src,dst,src_port;
                     if (drag_line.portType === 0) {
