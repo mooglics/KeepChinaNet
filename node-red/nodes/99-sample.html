@@ -47,7 +47,7 @@
     <div class="form-row">
         <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-config-tabs"></ul>
     </div>
-    <div id="node-config-tabs-content" style="min-height: 170px;">
+    <div id="node-config-tabs-content" style="height:450px;min-height: 250px;">
         <div id="config-tab-param" style="display:none">
             <div class="form-tips">Tip: 下表中下拉选择是取值方式以及配置值
                 <ul>
@@ -68,7 +68,7 @@
                 <input type="hidden" id="node-input-info" autofocus="autofocus">
             </div>
             <div class="form-row node-text-editor-row">
-                <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-info-editor"></div>
+                <div style="height: 450px; min-height:250px;" class="node-text-editor" id="node-input-info-editor"></div>
             </div>
         </div>
         <div id="config-tab-other" style="display:none">
@@ -199,7 +199,7 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
 
         }
 
-        $("#node-input-rule-container").css('min-height', '250px').css('min-width', '450px').editableList({
+        $("#node-input-rule-container").css('height','350px').css('min-height', '250px').css('min-width', '450px').editableList({
             addItem: function(container, i, opt) {
                 var rule = opt;
                 if (!rule.hasOwnProperty('paramtype')) {
