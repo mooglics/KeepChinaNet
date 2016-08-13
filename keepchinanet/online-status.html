@@ -22,9 +22,6 @@
     updateOnlineStatus();
 
     var CronJob = require('cron').CronJob;
-    new CronJob("*/10 * * * * *", function() {
-        main();
-    }).start();
 
     //引入request并启用Cookie
     var request = require('request').defaults({

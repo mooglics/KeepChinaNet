@@ -13,7 +13,7 @@ const ipcMain = electron.ipcMain;
 let mainWindow
 
 global.APP_CONFIG = {
-    isDevelopment: true,
+    isDevelopment: false,
     version: '1.0.0'
 };
 
@@ -26,7 +26,7 @@ if (global.APP_CONFIG.isDevelopment) {
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 640, resizable: false })
+    mainWindow = new BrowserWindow({ width: 450, height: 350, resizable: false })
     //mainWindow.loadURL(``)
 
     // and load the index.html of the app.

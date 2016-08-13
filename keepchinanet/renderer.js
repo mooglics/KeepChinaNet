@@ -28,6 +28,9 @@ $("#saveBtn").on("click", function() {
 
 
 function markOffline() {
+    $("#online_span").removeClass("label-success")
+    $("#online_span").addClass("label-default")
+
     $("#actionBtn").unbind("click");
     $("#actionBtn").text("连接")
     $("#actionBtn").removeClass("btn-success");
@@ -35,10 +38,14 @@ function markOffline() {
     $("#actionBtn").bind("click", function() {
         $("#actionBtn").unbind("click");
         keepJob.start();
+        main();//先尝试一次，就不用等待了。
     });
 }
 
 function markOnline() {
+    $("#online_span").removeClass("label-default")
+    $("#online_span").addClass("label-success")
+
     //在线后讲界面展示为在线状态
     $("#actionBtn").text("断开")
     $("#actionBtn").removeClass("btn-primary");
@@ -46,7 +53,7 @@ function markOnline() {
     $("#actionBtn").unbind("click");
     $("#actionBtn").bind("click", function() {
         request(LOGOUT_OPT, function(error, res, body) {
-            console.log("准备断开,%s",error);
+            console.log("准备断开,%s", error);
             keepJob.stop();
             if (body && res.statusCode == 200) {
                 //断网成功；
