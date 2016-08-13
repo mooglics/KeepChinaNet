@@ -5392,6 +5392,7 @@ RED.view = (function() {
 
                             d._ports.exit().remove();
                             if (d._ports) {
+                                //TODO 在这里需要重新计算port的坐标，修改成上下结构而不是左右结构。
                                 numOutputs = d.outputs || 1;
                                 y = (d.h/2)-((numOutputs-1)/2)*13;
                                 var x = d.w - 5;
