@@ -27,6 +27,14 @@ $("#saveBtn").on("click", function() {
 })
 
 
+$("#clearBtn").on("click", function() {
+    console.log("清理本地账号记录");
+    $("#chinanet-id").val("")
+    $("#chinanet-pwd").val("")
+    window.localStorage.removeItem("chinanet-id");
+    window.localStorage.removeItem("chinanet-pwd");
+})
+
 function markOffline() {
     $("#online_span").removeClass("label-success")
     $("#online_span").addClass("label-default")
@@ -36,6 +44,7 @@ function markOffline() {
     $("#actionBtn").removeClass("btn-success");
     $("#actionBtn").addClass("btn-primary");
     $("#actionBtn").bind("click", function() {
+        $("#actionBtn").text("开始尝试连接，请等待...")
         $("#actionBtn").unbind("click");
         keepJob.start();
         main();//先尝试一次，就不用等待了。
@@ -68,6 +77,8 @@ $(document).ready(function() {
     //从本地缓存中加载存储的账号密码
     $("#chinanet-id").val(window.localStorage.getItem("chinanet-id"))
     $("#chinanet-pwd").val(window.localStorage.getItem("chinanet-pwd"))
+
+    $("#actionBtn").text("检测ing...")
         //判断当前网络状态，如果可以上网则需要将界面设置为，已经联网，提供一个断网按钮，并开启轮询任务。
         // 不能上网则显示 开始按钮
     request(WAP_163, function(error, res, body) {
@@ -194,4 +205,4 @@ function step2(result, cb) {
 
 }
 
-var keepJob = new CronJob("*/10 * * * * *", function() { main(); });
+var keepJob = new CronJob("*/20 * * * * *", function() { main(); });

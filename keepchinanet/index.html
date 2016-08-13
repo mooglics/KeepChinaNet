@@ -20,7 +20,7 @@
             <label for="inputPassword" class="sr-only">Wifi 密码</label>
             <input type="password" id="chinanet-pwd" class="form-control" placeholder="Password" required>
             <button id="saveBtn" class="btn btn-primary " type="button">保存账号</button>
-            <button class="btn btn-danger" type="button">删除账号</button>
+            <button id="clearBtn" class="btn btn-danger" type="button">删除账号</button>
             <div class="well">
                 注：ChinaNet登陆后4个小时后会自动将用户下线
             </div>
@@ -29,7 +29,8 @@
     <!-- /container -->
 </body>
 <script>
-var jQuery = require('jquery');
+window.$ = window.jQuery = require('./jquery.min.js');
+//var jQuery = require('jquery');
 require('bootstrap');
 // You can also require other files to run in this process
 require('./renderer.js');
