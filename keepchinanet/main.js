@@ -13,11 +13,12 @@ const ipcMain = electron.ipcMain;
 let mainWindow
 
 global.APP_CONFIG = {
-    isDevelopment: false,
+    isDevelopment: true,
+    isReload : false,
     version: '1.0.0'
 };
 
-if (global.APP_CONFIG.isDevelopment) {
+if (global.APP_CONFIG.isReload) {
     require('electron-reload')(__dirname, {
         ignored: /node_modules|[\/\\]\./
     });
@@ -26,7 +27,7 @@ if (global.APP_CONFIG.isDevelopment) {
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 450, height: 350, resizable: false })
+    mainWindow = new BrowserWindow({ width: 450, height: 700, resizable: false })
     //mainWindow.loadURL(``)
 
     // and load the index.html of the app.

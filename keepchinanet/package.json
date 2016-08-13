@@ -9,8 +9,14 @@
   },
   "author": "mooglics",
   "license": "CC0-1.0",
-  "dependencies" : {
-    "electron-reload": "^1.0.1"
+  "dependencies": {
+    "async": "^2.0.1",
+    "bootstrap": "^3.3.7",
+    "cron": "^1.1.0",
+    "jquery": "^3.1.0",
+    "moment": "^2.14.1",
+    "request": "^2.74.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "electron-packager": "^7.3.0",
