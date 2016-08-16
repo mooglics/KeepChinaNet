@@ -6231,8 +6231,9 @@ RED.sidebar = (function() {
 
 RED.palette = (function() {
 
-    var exclusion = ['config','unknown','deprecated'];
-    var core = ['subflows', 'input', 'output', 'function', 'social', 'mobile', 'storage', 'analysis', 'advanced'];
+    var exclusion = ['config','unknown','deprecated','subflows', 'input', 'output', 'function', 'social', 'mobile', 'storage', 'analysis', 'advanced', 'analysis-function', 'advanced-function', 'advanced-input', 'storage-input', 'social-input', 'storage-output', 'social-output'];
+    //var core = ['subflows', 'input', 'output', 'function', 'social', 'mobile', 'storage', 'analysis', 'advanced'];
+    var core = ['Cathay'];
 
     var categoryContainers = {};
 
