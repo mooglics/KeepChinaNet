@@ -22,44 +22,27 @@
     font-color: #87A980;
 }
 </style>
-<script type="text/x-red" data-template-name="XML_ExpressReturnBoolValue">
+<script type="text/x-red" data-template-name="UPMix">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> 异常处理机制</label>
-        <select id="node-input-attr1">
-            <option value="1">需要异常</option>
-            <option value="2">xxxx</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> 是否冲正</label>
-        <select id="node-input-attr2">
-            <option value="1">需要异常</option>
-            <option value="2">xxxx</option>
+        <label for="node-input-name"><i class="fa fa-tag"></i>网关类型</label>
+        <select id="node-input-wangguan">
+            <option value="all">所有</option>
+            <option value="part">部分</option>
+            <option value="onlyone">唯一</option>
         </select>
     </div>
     <div class="form-row">
         <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-config-tabs"></ul>
     </div>
     <div id="node-config-tabs-content" style="height:450px;min-height: 250px;">
-        <div id="config-tab-param" style="display:none">
-            <div class="form-tips">Tip: 下表中下拉选择是取值方式以及配置值
-                <ul>
-                    <li><code>定值</code> - 以配置值作为参数</li>
-                    <li><code>XML标签</code> - 从总线中自动获取对应标签的值作为参数</li>
-                    <li><code>表达式</code> - 将配置值作为表达式进行计算的结果作为参数</li>
-                </ul>
-            </div>
-            <div class="form-row node-input-rule-container-row">
-                <ol id="node-input-rule-container"></ol>
-            </div>
-        </div>
         <div id="config-tab-pathcode" style="display:none">
-            <div class="form-tips">Tip: 下表中配置节点流程走向和走向说明文字
+            <div class="form-tips">Tip: 下表中配置节点变迁-流向。第一列是流向名称，第二列是表达式。
             </div>
+            <pre>TODO 缺少对流向事件配置项的样例</pre>
             <div class="form-row node-input-pathCode-container-row">
                 <ol id="node-input-pathCode-container"></ol>
             </div>
@@ -78,23 +61,23 @@
     </div>
 </script>
 <!-- Next, some simple help text is provided for the node.                   -->
-<script type="text/x-red" data-help-name="XML_ExpressReturnBoolValue">
+<script type="text/x-red" data-help-name="UPMix">
     <h3>组件使用帮助</h3>
-    <p>用于判断表达式是否为真的条件。</p>
+    <p>UP工作流的网关对象。</p>
     <pre>注意参数</pre>
     <ul>
-        <li>参数1：<code>node.log("Log")</code></li>
-        <li>参数2：<code>node.warn("Warning")</code></li>
-        <li>参数3：<code>node.error("Error")</code></li>
+        <li>所有：<code>所有节点全部符合条件</code></li>
+        <li>部分：<code>有符合提交的才符合流程推进</code></li>
+        <li>唯一：<code>只要有一个复合条件的才推进流程</code></li>
     </ul>
     <hr/>
 </script>
 <!-- Finally, the node type is registered along with all of its properties   -->
 <!-- The example below shows a small subset of the properties that can be set-->
 <script type="text/javascript">
-RED.nodes.registerType('XML_ExpressReturnBoolValue', {
-    color: "#87A980",
-    category: 'Cathay', // the palette category
+RED.nodes.registerType('UPMix', {
+    color: "#FFCC66",
+    category: 'UP工作流', // the palette category
     defaults: { // defines the editable properties of the node
         outputs: {
             value: 2
@@ -102,9 +85,9 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
         name: {
             value: ""
         }, //  along with default values.
-        topic: {
-            value: "",
-            required: false
+        wangguan: {
+            value: "all",
+            required: true
         },
         attr1: {
             value: ''
@@ -129,21 +112,29 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
         },
         pathCode: {
             value: [{
-                code: '-1',
-                memo: '失败后的出口'
+                code: '1',
+                memo: '流向1的表达式'
             }, {
-                code: '0',
-                memo: '组件成功结果'
+                code: '2',
+                memo: '流向2的表达式'
             }]
         }
     },
     inputs: 1, // set the number of inputs - only 0 or 1
     outputs: 2, // set the number of outputs - 0 to n
     // set the icon (held in icons dir below where you save the node)
-    icon: "function.png", // saved in  icons/myicon.png
-    paletteLabel : 'Tulip组件模型',
+    icon: function() {
+        if (this.wangguan==='all') {
+            return "light.png";
+        } else if (this.wangguan==='onlyone') {
+            return "serial.png";
+        } else {
+            return "template.png";
+        }
+    },
+    paletteLabel : '网关',
     label: function() { // sets the default label contents
-        return this.name || this.topic || "XML_ExpressReturnBoolValue";
+        return this.name || this.topic || "网关";
     },
     labelStyle: function() { // sets the class to apply to the label
         return this.name ? "node_label_italic" : "";
@@ -160,16 +151,12 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
             }
         });
         tabs.addTab({
-            id: "config-tab-param",
-            label: "组件参数"
-        });
-        tabs.addTab({
             id: "config-tab-pathcode",
-            label: "组件结果"
+            label: "流向"
         });
         tabs.addTab({
             id: "config-tab-memo",
-            label: "组件备注"
+            label: "备注"
         });
         tabs.addTab({
             id: "config-tab-other",
@@ -186,83 +173,6 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
             value: $("#node-input-info").val()
         });
         this.editor.focus();
-
-        var operators = [{
-            t: "定值",
-            v: "0"
-        }, {
-            t: "XML标签",
-            v: "1"
-        }, {
-            t: "表达式",
-            v: "2"
-        }];
-
-        //BEGIN 参数配置 ========================================================================
-        function resizeRule(rule) {
-            var newWidth = rule.width();
-            var selectField = rule.find("select");
-            var type = selectField.val() || "";
-            var valueField = rule.find(".node-input-rule-value");
-            var selectWidth;
-            //selectField.width(selectWidth);
-            selectWidth = selectField.width();
-            valueField.width(newWidth - selectWidth - 80);
-            //console.log("长度为 %s,%s,%s", newWidth, selectWidth);
-            // valueField.typedInput("width", (newWidth - selectWidth - 70));
-        }
-
-        $("#node-input-rule-container").css('height', '350px').css('min-height', '250px').css('min-width', '450px').editableList({
-            addItem: function(container, i, opt) {
-                var rule = opt;
-                if (!rule.hasOwnProperty('paramtype')) {
-                    rule.paramtype = '1';
-                }
-                var row = $('<div/>').appendTo(container);
-                var selectField = $('<select/>', {
-                    style: "width:100px; margin-left: 5px; text-align: center;"
-                }).appendTo(row);
-                for (var d in operators) {
-                    selectField.append($("<option></option>").val(operators[d].v).text(operators[d].t));
-                }
-                var valueField = $('<input/>', {
-                    class: "node-input-rule-value",
-                    type: "text",
-                    placeholder: "请输入参数内容",
-                    style: "margin-left: 5px;"
-                }).appendTo(row);
-                var finalspan = $('<span/>', {
-                    style: "float: left;margin-top: 6px;"
-                }).appendTo(row);
-                finalspan.append('<span class="node-input-rule-index">' + (i + 1) + ' </span> &#8594; ');
-
-                selectField.val(rule.paramtype);
-                valueField.val(rule.paramvalue);
-                resizeRule(row);
-            },
-            removeItem: function(opt) {
-                var rules = $("#node-input-rule-container").editableList('items');
-                rules.each(function(i) {
-                    $(this).find(".node-input-rule-index").html(i + 1);
-                });
-            },
-            resizeItem: resizeRule,
-            sortItems: function(rules) {
-                var rules = $("#node-input-rule-container").editableList('items');
-                rules.each(function(i) {
-                    $(this).find(".node-input-rule-index").html(i + 1);
-                });
-            },
-            addButton: "添加新参数",
-            sortable: false,
-            removable: true
-        });
-
-        for (var i = 0; i < this.rules.length; i++) {
-            var rule = this.rules[i];
-            $("#node-input-rule-container").editableList('addItem', rule);
-        }
-        //END 参数配置 ========================================================================
 
 
         //BEGIN 增加组件结果配置 ========================================================================
@@ -316,7 +226,6 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
                 });
             },
             sortable: true,
-            addButton: "添加新出口",
             removable: true
         });
 
@@ -330,22 +239,8 @@ RED.nodes.registerType('XML_ExpressReturnBoolValue', {
         $("#node-input-info").val(this.editor.getValue());
         delete this.editor;
 
-        //BEGIN 请求参数部分的配置 ========================================================================
-        var rules = $("#node-input-rule-container").editableList('items');
+
         var node = this;
-        node.rules = [];
-        rules.each(function(i) {
-            var rule = $(this);
-            var type = rule.find("select").val();
-            var r = {
-                paramtype: type
-            };
-            r.paramvalue = rule.find(".node-input-rule-value").val();
-
-            node.rules.push(r);
-        });
-        //END 请求参数部分的配置 ========================================================================
-
         //BEGIN 组件结果部分的配置 ========================================================================
 
         var codes = $("#node-input-pathCode-container").editableList('items');
