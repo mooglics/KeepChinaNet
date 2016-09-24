@@ -40,20 +40,21 @@
                 <label for="node-input-name"><i class="fa fa-tag"></i>优先级</label>
                 <input type="text" id="node-input-attr2" placeholder="Name">
             </div>
-                        <div class="form-row">
+            <div class="form-row">
                 <label for="node-input-name"><i class="fa fa-tag"></i>用户界面url</label>
                 <input type="text" id="node-input-attr3" placeholder="Name">
             </div>
-                                    <div class="form-row">
+            <div class="form-row">
                 <label for="node-input-name"><i class="fa fa-tag"></i>完成方式</label>
-                <input type="text" id="node-input-attr3" placeholder="Name">
+                <input style="width: 30px" type="radio" id="node-input-attr11" name="node-input-attr11"><span>任务型</span>
+                <input style="width: 30px" type="radio" id="node-input-attr12" name="node-input-attr11"><span>通知型</span>
             </div>
         </div>
         <div id="config-tab-fenpei" style="display:none">
-    <div class="form-row">
-        <label style="width: 150px"><i class="fa fa-gears"></i> <span>分配结果重用：</span></label>
-        <input style="width: 30px" type="checkbox" id="node-input-attr10"><span>后续进入时直接分配给之前执行者</span>
-    </div>
+            <div class="form-row">
+                <label style="width: 150px"><i class="fa fa-gears"></i> <span>分配结果重用：</span></label>
+                <input style="width: 30px" type="checkbox" id="node-input-attr10"><span>后续进入时直接分配给之前执行者</span>
+            </div>
         </div>
         <div id="config-tab-pathcode" style="display:none">
             <div class="form-tips">Tip: 下表中配置节点变迁-流向。第一列是流向名称，第二列是表达式。
@@ -111,15 +112,22 @@ RED.nodes.registerType('UPNode', {
         attr2: {
             value: ''
         }, //是否重整
+        attr3 : {value:''},
+        attr4 : {value:''},
+        attr5 : {value:''},
+        attr6 : {value:''},
+        attr7 : {value:''},
+        attr8 : {value:''},
+        attr9 : {value:''},
+        attr10 : {value:''},
+        attr11 : {value:''},
+        attr12 : {value:''},
+        attr13 : {value:''},
+        attr14 : {value:''},
+        attr15 : {value:''},
         info: {
             value: ''
         }, //说明
-        attr4: {
-            value: ''
-        }, // 输入参数
-        attr5: {
-            value: ''
-        }, // 执行结果
         rules: {
             value: [{
                 paramtype: "1",
